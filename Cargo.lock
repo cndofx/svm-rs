@@ -110,6 +110,10 @@ dependencies = [
 [[package]]
 name = "svm-asm"
 version = "0.1.0"
+dependencies = [
+ "log",
+ "simplelog",
+]
 
 [[package]]
 name = "syn"
