@@ -1,44 +1,7 @@
-#[derive(Debug)]
-pub enum Token<'s> {
-    LabelDef(&'s str),
-    LabelRef(&'s str),
-    String(&'s str),
-    EscapedString(String),
-    Number(i32),
-    Print,
-    In,
-    Out,
-    Add,
-    Sub,
-    Mul,
-    Div,
-    Mod,
-    Neg,
-    Inc,
-    Dec,
-    And,
-    Or,
-    Not,
-    Xor,
-    Shl,
-    Shr,
-    Pop,
-    Dup,
-    Swp,
-    Ovr,
-    Load,
-    Stor,
-    Jmp,
-    Je,
-    Jne,
-    Jg,
-    Jge,
-    Jl,
-    Jle,
-    Nop,
-    Halt,
-    Rf,
-    Crf,
+use crate::token::Token;
+
+pub fn tokenize(source: &str) -> Vec<Token> {
+    Lexer::new(source).tokenize()
 }
 
 pub struct Lexer<'s> {

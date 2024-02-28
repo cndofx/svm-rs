@@ -1,7 +1,8 @@
-use lexer::Lexer;
 use simplelog::{Config, LevelFilter, TermLogger, TerminalMode};
 
+// mod codegen;
 mod lexer;
+mod token;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -23,7 +24,7 @@ fn main() {
     // let outfile = &args[2];
 
     let source = std::fs::read_to_string(infile).unwrap();
-    let tokens = Lexer::new(&source).tokenize();
+    let tokens = lexer::tokenize(&source);
     dbg!(&tokens);
 
     // let source =
