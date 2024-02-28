@@ -229,7 +229,7 @@ fn escape_char(c: char) -> char {
 }
 
 fn escape_string(s: &str) -> String {
-    let mut out = String::new();
+    let mut out = String::with_capacity(s.len());
     let mut was_slash: bool = false;
     let chars = s.chars().peekable();
     for c in chars {
