@@ -3,6 +3,7 @@ pub enum Token<'s> {
     LabelDef(&'s str),
     LabelRef(&'s str),
     String(&'s str),
+    EscapedString(String),
     Number(i32),
     Print,
     In,
@@ -136,15 +137,6 @@ impl<'s> Lexer<'s> {
         Token::LabelRef(&self.source[start..end])
     }
 
-    fn tokenize_string(&mut self) -> Token<'s> {
-        self.consume(); // the opening "
-        let start = self.current;
-        self.consume_until(|c| c == '"');
-        let end = self.current;
-        self.consume(); // the closing "
-        Token::String(&self.source[start..end])
-    }
-
     fn tokenize_number(&mut self) -> Token<'s> {
         let start = self.current;
         self.consume_until_whitespace();
@@ -154,6 +146,22 @@ impl<'s> Lexer<'s> {
             .parse()
             .expect(&format!("unable to parse number '{slice}'"));
         Token::Number(num)
+    }
+
+    fn tokenize_string(&mut self) -> Token<'s> {
+        self.consume(); // the opening "
+        let start = self.current;
+        self.consume_until(|c| c == '"');
+        let end = self.current;
+        self.consume(); // the closing "
+
+        let slice = &self.source[start..end];
+        if slice.contains('\\') {
+            let escaped = escape_string(slice);
+            Token::EscapedString(escaped)
+        } else {
+            Token::String(slice)
+        }
     }
 
     fn tokenize_instruction(&mut self) -> Token<'s> {
@@ -207,4 +215,34 @@ impl<'s> Iterator for Lexer<'s> {
     fn next(&mut self) -> Option<Self::Item> {
         self.next_token()
     }
+}
+
+fn escape_char(c: char) -> char {
+    match c {
+        // 'a' => '\a',
+        'n' => '\n',
+        't' => '\t',
+        '\\' => '\\',
+        '0' => '\0',
+        c => c,
+    }
+}
+
+fn escape_string(s: &str) -> String {
+    let mut out = String::new();
+    let mut was_slash: bool = false;
+    let chars = s.chars().peekable();
+    for c in chars {
+        if c == '\\' {
+            was_slash = true;
+        } else {
+            if was_slash {
+                out.push(escape_char(c));
+                was_slash = false;
+            } else {
+                out.push(c);
+            }
+        }
+    }
+    out
 }
