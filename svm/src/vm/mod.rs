@@ -353,15 +353,15 @@ impl VM {
         }
     }
 
-    fn print_stack(&self) {
-        if self.sp == 0 {
-            return;
-        }
-        print!("[");
-        for v in &self.stack[0..self.sp - 1] {
-            print!("{v}, ");
-        }
-        print!("{}", self.stack[self.sp - 1]);
-        println!("]");
-    }
+    // fn print_stack(&self) {
+    //     if self.sp == 0 {
+    //         return;
+    //     }
+    //     print!("[");
+    //     for v in &self.stack[0..self.sp - 1] {
+    //         print!("{v}, ");
+    //     }
+    //     print!("{}", self.stack[self.sp - 1]);
+    //     println!("]");
+    // }
 }
