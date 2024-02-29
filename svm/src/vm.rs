@@ -1,6 +1,6 @@
 use log::{error, info};
 
-mod instructions;
+use svm::instructions;
 
 const STACK_SIZE: usize = 1024;
 const MEM_SIZE: usize = 1024;

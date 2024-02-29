@@ -1,6 +1,8 @@
+use std::io::Write;
+
 use simplelog::{Config, LevelFilter, TermLogger, TerminalMode};
 
-// mod codegen;
+mod codegen;
 mod lexer;
 mod token;
 
@@ -21,17 +23,21 @@ fn main() {
     .unwrap();
 
     let infile = &args[1];
-    // let outfile = &args[2];
+    let outfile = &args[2];
 
     let source = std::fs::read_to_string(infile).unwrap();
     let tokens = lexer::tokenize(&source);
     dbg!(&tokens);
 
-    // let source =
-    //     std::fs::read_to_string("/home/taylor/dev/rust/svm/examples/isort/isort.asm").unwrap();
-    // let lexer = Lexer::new(&source);
-    // let out = lexer.tokenize();
-    // dbg!(&out);
-    // let mut lexer = Lexer::new();
-    // lexer.lex_token(&source);
+    let code = codegen::generate(&tokens);
+    let outfile = std::fs::File::create(outfile).unwrap();
+    write_code(&code, outfile).unwrap();
+}
+
+fn write_code<W: Write>(code: &[i32], mut w: W) -> Result<(), std::io::Error> {
+    for inst in code {
+        let bytes = inst.to_le_bytes();
+        w.write_all(&bytes)?;
+    }
+    Ok(())
 }
